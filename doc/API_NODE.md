@@ -16,4 +16,4 @@ Write a string to `$app/_nodes/$node_adress.in`, where `$app` is the path to a l
 - `submit_info`: Force the node to re-register itself with the tracker
 - `exit`: Force the node to exit
 
-Read the status of a node at `$app/_nodes/$node_address.out`
+Read the status / STDOUT of a node at `$app/_nodes/$node_address.out`
