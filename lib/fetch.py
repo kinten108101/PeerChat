@@ -16,7 +16,7 @@ def work_fetch(host, port, id, body, on_response):
   on_response(response)
 
 def fetch(address, id, body, on_response):
+  """ to fetch is to establish a one-time connection where a request is sent and a response is received. This is mostly inspired by the fetch function from NodeJS and browser JavaScript """
   host, port = address
-  """ usage like js fetch lol """
   Thread(target=work_fetch, args=(host, port, id, body, on_response)).start()
   pass
