@@ -15,10 +15,12 @@ def submit_info():
   print(f"agent: submitting info to tracker")
   fetch(TRACKER_ADDRESS, "submit_info", body, on_response)
 
-dotenv.source(prefix="node-agent")
-trackaddr = getenv("TRACKER_ADDRESS")
-if trackaddr is None:
-  raise Exception("wtf")
-trackaddr = trackaddr.split(":")
-TRACKER_ADDRESS = trackaddr[0], int(trackaddr[1])
-submit_info()
+if __name__ == "__main__":
+  dotenv.source(prefix="node-agent")
+  trackaddr = getenv("TRACKER_ADDRESS")
+  if trackaddr is None:
+    raise Exception("wtf")
+  trackaddr = trackaddr.split(":")
+  global TRACKER_ADDRESS
+  TRACKER_ADDRESS = trackaddr[0], int(trackaddr[1])
+  submit_info()
