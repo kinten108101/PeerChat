@@ -37,7 +37,7 @@ def on_connection(request, response):
     response.write(get_list())
   else:
     raise OSError("wtf")
-  pass
+  response.close()
 
 if __name__ == "__main__":
   cancellable = Cancellable()
