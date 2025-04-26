@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+from os import getenv
+import lib.dotenv as dotenv
 from lib.fetch import fetch
 
-TRACKER_ADDRESS = ("127.0.0.1", 7090)
 
 def peer_connect(address):
   pass
@@ -14,4 +15,10 @@ def submit_info():
   print(f"agent: submitting info to tracker")
   fetch(TRACKER_ADDRESS, "submit_info", body, on_response)
 
+dotenv.source(prefix="node-agent")
+trackaddr = getenv("TRACKER_ADDRESS")
+if trackaddr is None:
+  raise Exception("wtf")
+trackaddr = trackaddr.split(":")
+TRACKER_ADDRESS = trackaddr[0], int(trackaddr[1])
 submit_info()
