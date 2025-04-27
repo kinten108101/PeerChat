@@ -13,6 +13,9 @@ class Response():
   def write(self, content):
     self.client_connection.sendall(content.encode())
 
+  def close(self):
+    return self.client_connection.close()
+
 def listen(address, on_connection, cancellable):
   socket = make_socket()
   socket.bind(address)

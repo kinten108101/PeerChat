@@ -1,3 +1,4 @@
+from lib.promise import Promise
 from socket import socket as make_socket
 import json
 from threading import Thread
@@ -15,8 +16,7 @@ def work_fetch(host, port, id, body, on_response):
   response = response.decode()
   on_response(response)
 
-def fetch(address, id, body, on_response):
+def fetch(address, id, body):
   """ to fetch is to establish a one-time connection where a request is sent and a response is received. This is mostly inspired by the fetch function from NodeJS and browser JavaScript """
   host, port = address
-  Thread(target=work_fetch, args=(host, port, id, body, on_response)).start()
-  pass
+  return Promise(target=work_fetch, args=(host, port, id, body))
