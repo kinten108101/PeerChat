@@ -44,5 +44,4 @@ def on_connection(request, response):
 
 if __name__ == "__main__":
   cancellable = Cancellable()
-  cancellable.set()
   listen(ADDRESS, on_connection, cancellable)
