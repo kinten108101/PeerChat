@@ -3,6 +3,7 @@ from os import getenv
 import lib.dotenv as dotenv
 from lib.fetch import fetch
 
+NODE_ADDRESS = ("127.0.0.1", 7230)
 
 def peer_connect(address):
   pass
@@ -11,7 +12,7 @@ def work_submit_info():
   def on_response(response):
     print(f"agent: tracker responsed: \"{response}\"")
   body = {}
-  body["address"] = ("127.0.0.1", 723)
+  body["address"] = NODE_ADDRESS
   print(f"agent: submitting info to tracker")
   return fetch(TRACKER_ADDRESS, "submit_info", body).then(on_response)
 
