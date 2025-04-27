@@ -4,7 +4,9 @@ import json
 from lib.cancellable import Cancellable
 from lib.server import listen
 from lib.regexp import RegExpBuffer
+from threading import Lock
 
+mutex = Lock()
 re_submit_info = re.compile(r"^submit_info:(.+)$")
 re_get_list = re.compile(r"^get_list$")
 
@@ -16,8 +18,9 @@ ADDRESS = ("127.0.0.1", 7090)
 TRACKING = {}
 
 def add_list(body):
-  global TRACKING
-  TRACKING[f"{body["address"][0]}:{body["address"][1]}"] = "test"
+  global TRACKING, mutex
+  with mutex:
+    TRACKING[f"{body["address"][0]}:{body["address"][1]}"] = "test"
 
 def get_list():
   return json.dumps(TRACKING)
