@@ -17,25 +17,30 @@ class Response():
   def close(self):
     return self.client_connection.close()
 
-def work_listen(address, cancellable, on_connection):
-  socket = make_socket()
-  socket.bind(address)
-  socket.listen(1)
-  while cancellable.is_set():
-    try:
-      client = socket.accept()
-      def _a71(client, _):
-        client_conn, client_address = client
-        request = client_conn.recv(1024)
-        request = request.decode()
-        print(f"listen: received \"{request}\"")
-        request = Request(client_address, request)
-        response = Response(client_conn)
-        on_connection(request, response)
-      Thread(target=_a71, args=(client, None)).start()
-    except TimeoutError:
-      pass
-  socket.close()
+class Server():
+  def __init__(self, address):
+    self.address = address
 
-def listen(address, on_connection, cancellable):
-  return Promise(target=work_listen, args=[address, cancellable]).then(on_connection)
+  def work_listen(self, cancellable, on_connection):
+    address = self.address
+    socket = make_socket()
+    socket.bind(address)
+    socket.listen(1)
+    while cancellable.is_set():
+      try:
+        client = socket.accept()
+        def _a71(client, _):
+          client_conn, client_address = client
+          request = client_conn.recv(1024)
+          request = request.decode()
+          print(f"listen: received \"{request}\"")
+          request = Request(client_address, request)
+          response = Response(client_conn)
+          on_connection(request, response)
+        Thread(target=_a71, args=(client, None)).start()
+      except TimeoutError:
+        pass
+    socket.close()
+
+  def listen_async(self, cancellable):
+    return Promise(target=self.work_listen, args=[cancellable])

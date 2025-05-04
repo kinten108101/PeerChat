@@ -2,20 +2,21 @@ from socket import socket as Socket
 import socket
 
 def is_port_in_use(port):
+  """ from somewhere on stackoverflow """
   with Socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     return s.connect_ex(('localhost', port)) == 0
 
-def generate():
-  port = 2000
+def generate(starting=2000):
+  port = starting
   port = int(port)
   while is_port_in_use(port):
     port = port + 1
   return port
 
-_PORT = None
+class Port():
+  _PORT = None
 
-def get():
-  global _PORT
-  if _PORT is None:
-    _PORT = generate()
-  return _PORT
+  def get():
+    if Port._PORT is None:
+      Port._PORT = generate()
+    return Port._PORT

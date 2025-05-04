@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 from socket import setdefaulttimeout
 from lib.shmem_msg import MessageRegion
-import lib.port as Port
-import lib.vardir as Vardir
+from lib.port import Port
+from lib.vardir import Vardir
 import re
 import time
 import os
 import json
-import lib.dotenv as dotenv
+import lib.dotenv
 from lib.cancellable import Cancellable
 from lib.address import address
-from lib.server import listen
+from lib.server import Server
 from lib.regexp import RegExpBuffer
 from threading import Lock
 
@@ -64,16 +64,17 @@ def on_controller_message(message, cancellable):
     OSError(f"cli-message: unknown message \"{message}\"")
 
 if __name__ == "__main__":
-  dotenv.source(prefix="tracker")
+  lib.dotenv.source(prefix="tracker")
   global ADDRESS
   ADDRESS = address(os.getenv("ADDRESS"))
   cancellable = Cancellable()
   # setup inter-process server
-  msg_region = Vardir.path("tracker/in")
+  msg_region = Vardir.path("tracker", "in")
   msg_region = MessageRegion(msg_region)
-  msg_region.start(on_controller_message, cancellable)
+  msg_region.watch_async(cancellable).then(on_controller_message).start()
   # setup inter-network server
-  listen(ADDRESS, on_connection, cancellable).start()
+  server = Server(ADDRESS)
+  server.listen_async(cancellable).then(on_connection).start()
   try:
     while True:
       time.sleep(0.1)
