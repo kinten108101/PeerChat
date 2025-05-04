@@ -15,4 +15,4 @@ Write a string to `var/node_agent-$portnum/in`, where `$portnum` is the port num
 - `submit_info:{}`: Force the node to re-register itself with the tracker
 - `exit:{}`: Force the node to exit
 
-Read the status / response of a node at `$app/_nodes/$node_address.out`. Make sure to fully consume / clear the region after reading.
+Read the status / response of a node at `var/node_agent-$portnum/out`. Make sure to fully consume / clear the region after reading.
