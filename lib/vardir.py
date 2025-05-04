@@ -1,4 +1,7 @@
-DIRECTORY_NAME = "var"
+import os.path
 
-def path(s):
-  return f"{DIRECTORY_NAME}/{s}"
+class Vardir():
+  DIRECTORY_NAME = "var"
+
+  def path(*s):
+    return os.path.join(Vardir.DIRECTORY_NAME, *s)

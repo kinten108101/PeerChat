@@ -18,7 +18,7 @@ class MessageRegion():
     self._filepath = filepath
     self._work = None
 
-  def _work_listen(self, _, cancellable, on_received_message):
+  def _work_listen(self, cancellable, on_received_message):
     filepath = self._filepath
     mkdir_relaxed(os.path.dirname(filepath))
     with open(filepath, mode="w+", encoding="utf8") as file:
@@ -45,11 +45,6 @@ class MessageRegion():
       time.sleep(DELAY_WAIT_CLI)
     Path.unlink(filepath)
 
-  def start(self, on_received_message, cancellable):
-    if cancellable:
-      self._cancellable = cancellable
-    else:
-      self._cancellable = Cancellable()
-    self._work = Promise(target=self._work_listen, args=(None, self._cancellable))
-    self._work = self._work.then(on_received_message).start()
-    return self
+  def watch_async(self, cancellable):
+    self._work = Promise(target=self._work_listen, args=[self._cancellable])
+    return self._work
