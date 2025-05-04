@@ -1,4 +1,5 @@
 from socket import socket as make_socket
+from lib.promise import Promise
 from threading import Thread
 
 class Request():
@@ -16,7 +17,7 @@ class Response():
   def close(self):
     return self.client_connection.close()
 
-def listen(address, on_connection, cancellable):
+def work_listen(address, cancellable, on_connection):
   socket = make_socket()
   socket.bind(address)
   socket.listen(1)
@@ -35,3 +36,6 @@ def listen(address, on_connection, cancellable):
     except TimeoutError:
       pass
   socket.close()
+
+def listen(address, on_connection, cancellable):
+  return Promise(target=work_listen, args=[address, cancellable]).then(on_connection)

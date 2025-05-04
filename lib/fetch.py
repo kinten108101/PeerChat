@@ -20,3 +20,16 @@ def fetch(address, id, body):
   """ to fetch is to establish a one-time connection where a request is sent and a response is received. This is mostly inspired by the fetch function from NodeJS and browser JavaScript """
   host, port = address
   return Promise(target=work_fetch, args=(host, port, id, body))
+
+def fetch_sync(address, id, body):
+  host, port = address
+  body = json.dumps(body)
+  content = f"{id}:{body}"
+  print(f"fetch: sending \"{content}\"")
+  socket = make_socket()
+  socket.connect((host, port))
+  content = content.encode()
+  socket.sendall(content)
+  response = socket.recv(1024)
+  response = response.decode()
+  return response

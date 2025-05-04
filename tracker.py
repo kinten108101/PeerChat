@@ -32,7 +32,7 @@ def get_list():
   return json.dumps(TRACKING)
 
 re_submit_info = re.compile(r"^submit_info:(.+)$")
-re_get_list = re.compile(r"^get_list$")
+re_get_list = re.compile(r"^get_list:{}$")
 
 def on_connection(request, response):
   print(f"tracker: received from client: \"{request.message}\"")
@@ -72,4 +72,4 @@ if __name__ == "__main__":
   msg_region = MessageRegion(msg_region)
   msg_region.start(on_controller_message, cancellable)
   # setup inter-network server
-  listen(ADDRESS, on_connection, cancellable)
+  listen(ADDRESS, on_connection, cancellable).start()
