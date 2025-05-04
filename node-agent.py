@@ -72,4 +72,4 @@ if __name__ == "__main__":
   msg_region.start(on_controller_message, cancellable)
   # setup inter-network server
   nodeaddr = get_this_address(), Port.get()
-  listen(nodeaddr, on_connection, cancellable)
+  listen(nodeaddr, on_connection, cancellable).start()

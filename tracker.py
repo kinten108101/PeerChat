@@ -72,4 +72,4 @@ if __name__ == "__main__":
   msg_region = MessageRegion(msg_region)
   msg_region.start(on_controller_message, cancellable)
   # setup inter-network server
-  listen(ADDRESS, on_connection, cancellable)
+  listen(ADDRESS, on_connection, cancellable).start()
