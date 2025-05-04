@@ -32,7 +32,7 @@ def get_list():
   return json.dumps(TRACKING)
 
 re_submit_info = re.compile(r"^submit_info:(.+)$")
-re_get_list = re.compile(r"^get_list$")
+re_get_list = re.compile(r"^get_list:{}$")
 
 def on_connection(request, response):
   print(f"tracker: received from client: \"{request.message}\"")
