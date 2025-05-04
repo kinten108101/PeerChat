@@ -132,3 +132,8 @@ if __name__ == "__main__":
   Promise(target=work_watch_auth, args=[cancellable]).then(on_debug_auth_change).start()
   # autofetch peer list
   Promise(target=work_autofetch_peer_list, args=[cancellable]).then(on_received_new_peer_list).start()
+  try:
+    while True:
+      time.sleep(0.1)
+  except KeyboardInterrupt:
+    cancellable.clear()

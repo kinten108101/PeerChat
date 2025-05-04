@@ -4,6 +4,7 @@ from lib.shmem_msg import MessageRegion
 import lib.port as Port
 import lib.vardir as Vardir
 import re
+import time
 import os
 import json
 import lib.dotenv as dotenv
@@ -73,3 +74,8 @@ if __name__ == "__main__":
   msg_region.start(on_controller_message, cancellable)
   # setup inter-network server
   listen(ADDRESS, on_connection, cancellable).start()
+  try:
+    while True:
+      time.sleep(0.1)
+  except KeyboardInterrupt:
+    cancellable.clear()
