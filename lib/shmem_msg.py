@@ -13,7 +13,7 @@ def mkdir_relaxed(s):
   except FileExistsError:
     pass
 
-class MessageRegion():
+class InputMessageRegion():
   def __init__(self, filepath):
     self._filepath = filepath
     self._work = None

@@ -13,7 +13,7 @@ import re
 from lib.server import Server
 from lib.fetch import fetch, fetch_sync
 from lib.cancellable import Cancellable
-from lib.shmem_msg import MessageRegion
+from lib.shmem_msg import InputMessageRegion
 
 DELAY_A = 0.1
 setdefaulttimeout(DELAY_A)
@@ -127,7 +127,7 @@ if __name__ == "__main__":
   cancellable = Cancellable()
   # setup inter-process server
   msg_region = Vardir.path(f"node_agent-{Port.get()}", "in")
-  msg_region = MessageRegion(msg_region)
+  msg_region = InputMessageRegion(msg_region)
   msg_region.watch_async(cancellable).then(on_controller_message).start()
   # setup inter-network server
   nodeaddr = get_this_address(), Port.get()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from socket import setdefaulttimeout
-from lib.shmem_msg import MessageRegion
+from lib.shmem_msg import InputMessageRegion
 from lib.port import Port
 from lib.vardir import Vardir
 import re
@@ -70,7 +70,7 @@ if __name__ == "__main__":
   cancellable = Cancellable()
   # setup inter-process server
   msg_region = Vardir.path("tracker", "in")
-  msg_region = MessageRegion(msg_region)
+  msg_region = InputMessageRegion(msg_region)
   msg_region.watch_async(cancellable).then(on_controller_message).start()
   # setup inter-network server
   server = Server(ADDRESS)
