@@ -13,7 +13,7 @@ import re
 from lib.server import Server
 from lib.fetch import fetch, fetch_sync
 from lib.cancellable import Cancellable
-from lib.shmem_msg import InputMessageRegion
+from lib.shmem_msg import InputMessageRegion, OutputMessageRegion
 
 DELAY_A = 0.1
 setdefaulttimeout(DELAY_A)
@@ -33,7 +33,7 @@ def submit_info_async():
   print(f"agent: submitting info to tracker")
   return fetch(TRACKER_ADDRESS, "submit_info", body).then(on_response)
 
-def on_connection(request, response):
+def on_connection(request, response, writer):
   pass
 
 def login_async(username, password):
@@ -49,7 +49,7 @@ ac = re.compile(r"^print_info$")
 ad = re.compile(r"^submit_info$")
 ae = re.compile(r"^login:([^:]+):([^:]+)$")
 
-def on_controller_message(message, cancellable):
+def on_controller_message(message, cancellable, writer):
   regexp = RegExpBuffer()
   if regexp.match(aa, message):
     print("connecting..." + regexp.group(1) + " " + regexp.group(2))
@@ -64,7 +64,9 @@ def on_controller_message(message, cancellable):
     cancellable.clear()
     return
   elif regexp.match(ac, message):
-    print(f"address: {get_this_address()}:{lib.port.get()}")
+    content = f"address: {get_this_address()}:{Port.get()}"
+    print(content)
+    writer.write(content)
     return
   elif regexp.match(ad, message):
     submit_info_async().start()
@@ -125,14 +127,21 @@ if __name__ == "__main__":
   global TRACKER_ADDRESS
   TRACKER_ADDRESS = address(getenv("TRACKER_ADDRESS"))
   cancellable = Cancellable()
+  # setup output
+  region = Vardir.path(f"node_agent-{Port.get()}", "out")
+  writer = OutputMessageRegion(region)
   # setup inter-process server
   msg_region = Vardir.path(f"node_agent-{Port.get()}", "in")
   msg_region = InputMessageRegion(msg_region)
-  msg_region.watch_async(cancellable).then(on_controller_message).start()
+  def _on_controller_message(*args):
+    return on_controller_message(*args, writer)
+  msg_region.watch_async(cancellable).then(_on_controller_message).start()
   # setup inter-network server
   nodeaddr = get_this_address(), Port.get()
   server = Server(nodeaddr)
-  server.listen_async(cancellable).then(on_connection).start()
+  def _on_connection(*args):
+    return on_connection(*args, writer)
+  server.listen_async(cancellable).then(_on_connection).start()
   # autofetchers
   watch_auth_async(cancellable).then(on_debug_auth_change).start()
   autofetch_peer_list_async(cancellable).then(on_received_new_peer_list).start()

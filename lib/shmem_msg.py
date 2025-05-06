@@ -48,3 +48,12 @@ class InputMessageRegion():
   def watch_async(self, cancellable):
     self._work = Promise(target=self._work_listen, args=[cancellable])
     return self._work
+
+class OutputMessageRegion():
+  def __init__(self, filepath):
+    self._filepath = filepath
+    self._work = None
+
+  def write(self, message):
+    with open(self._filepath, "w+") as f:
+      f.write(message)
