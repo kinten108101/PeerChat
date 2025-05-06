@@ -1,7 +1,5 @@
-# GUI
+# PeerChat
 
-## Dependencies
+PeerChat is minimal peer-to-peer messaging system and application. Host a platform of chatrooms for your group of friends or school community.
 
-You should have tkinter on your system, which comes prebundled with the Python binding which `chat-ui.py` needs
-
-Other dependencies are listed in `requirements.txt`
+PeerChat is inspired by Discord, Matrix, etc.

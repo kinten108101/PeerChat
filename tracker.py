@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 from socket import setdefaulttimeout
 from lib.shmem_msg import MessageRegion
-import lib.port as Port
-import lib.vardir as Vardir
+from lib.port import Port
+from lib.vardir import Vardir
 import re
+import time
 import os
 import json
-import lib.dotenv as dotenv
+import lib.dotenv
 from lib.cancellable import Cancellable
 from lib.address import address
-from lib.server import listen
+from lib.server import Server
 from lib.regexp import RegExpBuffer
 from threading import Lock
 
@@ -26,13 +27,13 @@ TRACKING = {}
 def add_list(body, ip):
   global TRACKING, mutex
   with mutex:
-    TRACKING[f"{ip}:{body["stable_port"]}"] = "test"
+    TRACKING[f'{ip}:{body["stable_port"]}'] = "test"
 
 def get_list():
   return json.dumps(TRACKING)
 
 re_submit_info = re.compile(r"^submit_info:(.+)$")
-re_get_list = re.compile(r"^get_list$")
+re_get_list = re.compile(r"^get_list:{}$")
 
 def on_connection(request, response):
   print(f"tracker: received from client: \"{request.message}\"")
@@ -42,7 +43,7 @@ def on_connection(request, response):
     body = regexp.group(1)
     body = json.loads(body)
     ip = request.address[0]
-    print(f"tracker: submit_info: address {ip}:{body["stable_port"]}")
+    print(f'tracker: submit_info: address {ip}:{body["stable_port"]}')
     add_list(body, ip)
     response.write(get_list())
   elif regexp.match(re_get_list, request.message):
@@ -63,13 +64,19 @@ def on_controller_message(message, cancellable):
     OSError(f"cli-message: unknown message \"{message}\"")
 
 if __name__ == "__main__":
-  dotenv.source(prefix="tracker")
+  lib.dotenv.source(prefix="tracker")
   global ADDRESS
   ADDRESS = address(os.getenv("ADDRESS"))
   cancellable = Cancellable()
   # setup inter-process server
-  msg_region = Vardir.path("tracker/in")
+  msg_region = Vardir.path("tracker", "in")
   msg_region = MessageRegion(msg_region)
-  msg_region.start(on_controller_message, cancellable)
+  msg_region.watch_async(cancellable).then(on_controller_message).start()
   # setup inter-network server
-  listen(ADDRESS, on_connection, cancellable)
+  server = Server(ADDRESS)
+  server.listen_async(cancellable).then(on_connection).start()
+  try:
+    while True:
+      time.sleep(0.1)
+  except KeyboardInterrupt:
+    cancellable.clear()
