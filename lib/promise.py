@@ -14,6 +14,8 @@ API is a mix between JavaScript's Promise and Python's Thread
     return self
 
   def start(self):
+    if self.on_response is None:
+      raise Exception("promise was not bound with a then clause")
     Thread(target=self.target, args=(*self.args, self.on_response)).start()
     return self
 
