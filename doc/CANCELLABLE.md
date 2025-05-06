@@ -1,0 +1,1 @@
+A cancellable is a passed-down handle for any code in the stack to thread-safely exit. The PeerChat Cancellable API is a light wrapper over `threading.Event` a.k.a. Python Event. The interface is based on GLib's GCancellable API.

@@ -46,5 +46,5 @@ class MessageRegion():
     Path.unlink(filepath)
 
   def watch_async(self, cancellable):
-    self._work = Promise(target=self._work_listen, args=[self._cancellable])
+    self._work = Promise(target=self._work_listen, args=[cancellable])
     return self._work
