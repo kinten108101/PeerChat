@@ -1,5 +1,9 @@
 Follows the communication protocol as specified in [[/docs/PROTOCOL.md]].
 
+## (Tracker) Talks to a Node
+
+- `check_alive:{}`: Ping if a node agent is running. The node agent must reply `is_alive:{}`.
+
 ## (Node) Talks to a Node
 
 From a Node, send a string to the other Node's IP address.
