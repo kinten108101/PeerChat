@@ -76,10 +76,11 @@ def auto_check(cancellable):
           response = client_socket.recv(1024).decode()
           
           if response == "is_alive:{}":
-            print(f"Channel is online")
+            print(f"Node {client} is online")
 
           client_socket.close()
         except Exception :
+          print(f"A node has gone offline {client}")
           f(client)
           break
       time.sleep(10)
