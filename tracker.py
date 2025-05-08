@@ -13,6 +13,8 @@ from lib.address import address
 from lib.server import Server
 from lib.regexp import RegExpBuffer
 from threading import Lock
+import socket
+from lib.promise import Promise
 
 DELAY_A = 1
 setdefaulttimeout(DELAY_A)
@@ -22,7 +24,7 @@ mutex = Lock()
 class User():
   pass
 
-TRACKING = {}
+TRACKING = {}  #
 
 def add_list(body, ip):
   global TRACKING, mutex
@@ -63,6 +65,35 @@ def on_controller_message(message, cancellable):
   else:
     OSError(f"cli-message: unknown message \"{message}\"")
 
+def auto_check(cancellable):
+  def target(f):
+    while cancellable.is_set():
+      for client in TRACKING:
+        client_socket = socket.socket()
+        client_socket.settimeout(5)
+        client_ip, client_port = client.split(":")
+        client_socket.connect((client_ip,int(client_port)))
+        try:   
+          check_data = "check_alive:{}"
+          client_socket.sendall(f"{check_data}".encode())
+          response = client_socket.recv(1024).decode()
+          
+          if response == "is_alive:{}":
+            print(f"Channel is online")
+
+          client_socket.close()
+        except Exception :
+          f(client)
+          break
+      time.sleep(10)
+  return Promise(target=target, args=[])
+                
+def handle_not_alive_client(delete_client):
+  global TRACKING
+  with mutex:
+    if delete_client in TRACKING:
+      del TRACKING[delete_client]
+          
 if __name__ == "__main__":
   lib.dotenv.source(prefix="tracker")
   global ADDRESS
@@ -75,6 +106,7 @@ if __name__ == "__main__":
   # setup inter-network server
   server = Server(ADDRESS)
   server.listen_async(cancellable).then(on_connection).start()
+  auto_check(cancellable).then(handle_not_alive_client).start()
   try:
     while True:
       time.sleep(0.1)
