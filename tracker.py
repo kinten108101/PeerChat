@@ -21,9 +21,6 @@ setdefaulttimeout(DELAY_A)
 
 mutex = Lock()
 
-class User():
-  pass
-
 TRACKING = {}  #
 
 def add_list(body, ip):
