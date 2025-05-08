@@ -48,11 +48,11 @@ def login_async(username, password):
     USER = f"{username}:{password}"
   return Promise(target=a, args=[username, password])
 
-aa = re.compile(r"^connect:([\\.0-9]+):([0-9]+)$")
-ab = re.compile(r"^exit$")
-ac = re.compile(r"^print_info$")
-ad = re.compile(r"^submit_info$")
-ae = re.compile(r"^login:([^:]+):([^:]+)$")
+aa = re.compile(r'^connect:{ "address": "([\\.0-9]+):([0-9]+)" }$')
+ab = re.compile(r"^exit:{}$")
+ac = re.compile(r"^print_info:{}$")
+ad = re.compile(r"^submit_info:{}$")
+ae = re.compile(r'^login:{ "name": "([^:]+)", "password": "([^:]+)" }$')
 
 def on_controller_message(message, cancellable, writer):
   regexp = RegExpBuffer()
