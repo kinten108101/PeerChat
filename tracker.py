@@ -14,7 +14,7 @@ from lib.server import Server
 from lib.regexp import RegExpBuffer
 from threading import Lock
 
-DELAY_A = 0.1
+DELAY_A = 1
 setdefaulttimeout(DELAY_A)
 
 mutex = Lock()

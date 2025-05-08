@@ -15,7 +15,7 @@ from lib.fetch import fetch, fetch_sync
 from lib.cancellable import Cancellable
 from lib.shmem_msg import InputMessageRegion, OutputMessageRegion
 
-DELAY_A = 0.1
+DELAY_A = 1
 setdefaulttimeout(DELAY_A)
 
 def peer_connect(address):
