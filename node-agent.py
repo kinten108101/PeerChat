@@ -33,8 +33,13 @@ def submit_info_async():
   print(f"agent: submitting info to tracker")
   return fetch(TRACKER_ADDRESS, "submit_info", body).then(on_response)
 
+re_check_alive = re.compile(r"^check_alive:{}$")
+
 def on_connection(request, response, writer):
-  pass
+  regexp = RegExpBuffer()
+  if regexp.match(re_check_alive, request.message):
+    response.write("is_alive:{}")
+  response.close()
 
 def login_async(username, password):
   global USER
