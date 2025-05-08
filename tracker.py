@@ -69,8 +69,8 @@ def auto_check(cancellable):
         client_socket = socket.socket()
         client_socket.settimeout(5)
         client_ip, client_port = client.split(":")
-        client_socket.connect((client_ip,int(client_port)))
         try:   
+          client_socket.connect((client_ip,int(client_port)))
           check_data = "check_alive:{}"
           client_socket.sendall(f"{check_data}".encode())
           response = client_socket.recv(1024).decode()
