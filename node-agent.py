@@ -26,7 +26,7 @@ def get_this_address():
 
 def submit_info_async():
   def on_response(response):
-    print(f"agent: tracker responsed: \"{response}\"")
+    print(f'agent: tracker responsed: \"{response}\"')
   body = {
     "stable_port": Port.get(),
   }
@@ -76,7 +76,7 @@ def on_controller_message(message, cancellable, writer):
     password = regexp.group(2)
     login_async(username, password).start()
     return
-  print(f"cli-message: unknown message \"{message}\"")
+  print(f'cli-message: unknown message \"{message}\"')
 
 USER = None
 

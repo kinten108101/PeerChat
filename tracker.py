@@ -27,7 +27,7 @@ TRACKING = {}
 def add_list(body, ip):
   global TRACKING, mutex
   with mutex:
-    TRACKING[f"{ip}:{body["stable_port"]}"] = "test"
+    TRACKING[f'{ip}:{body["stable_port"]}'] = "test"
 
 def get_list():
   return json.dumps(TRACKING)
@@ -36,14 +36,14 @@ re_submit_info = re.compile(r"^submit_info:(.+)$")
 re_get_list = re.compile(r"^get_list:{}$")
 
 def on_connection(request, response):
-  print(f"tracker: received from client: \"{request.message}\"")
+  print(f'tracker: received from client: \"{request.message}\"')
   regexp = RegExpBuffer()
   if regexp.match(re_submit_info, request.message):
     print(f"tracker: request is submit_info")
     body = regexp.group(1)
     body = json.loads(body)
     ip = request.address[0]
-    print(f"tracker: submit_info: address {ip}:{body["stable_port"]}")
+    print(f'tracker: submit_info: address {ip}:{body["stable_port"]}')
     add_list(body, ip)
     response.write(get_list())
   elif regexp.match(re_get_list, request.message):
