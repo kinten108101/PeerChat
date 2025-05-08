@@ -1,5 +1,7 @@
 # PeerChat
 
+> Warning: This project is still WIP with new breaking API changes every day
+
 PeerChat is minimal peer-to-peer messaging system and application. Host a platform of chatrooms for your group of friends or school community.
 
 PeerChat is inspired by Discord, Matrix, etc.
