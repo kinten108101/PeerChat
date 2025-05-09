@@ -105,7 +105,9 @@ def print(s):
     try:
         port = os.getenv("PORT")
         if port:
-            log_path = os.path.join(LOG_DIR, f"{port}")
+            namespace = f"node_agent-{port}"
+            os.makedirs(os.path.join(LOG_DIR, namespace), exist_ok=True)
+            log_path = os.path.join(LOG_DIR, namespace, "log.txt")
             with open(log_path, "a") as f:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                 f.write(f"[{timestamp}] app: {s}\n")

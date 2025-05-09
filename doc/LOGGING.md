@@ -1,7 +1,8 @@
 Format: all format messages follow this format
 
 ```bnf
-log: header ':' ' ' message;
+log: '[' timestamp ']' ' ' header ':' ' ' message;
+timestamp: /* locale time format */;
 header: domain | domain '/' portnum;
 domain: STRING;
 message: STRING;

@@ -2,7 +2,7 @@
 from lib.regexp import RegExpBuffer
 from lib.port import Port
 from lib.vardir import Vardir
-from os import getenv
+import os
 from socket import setdefaulttimeout
 import json
 import time
@@ -14,6 +14,7 @@ from lib.server import Server
 from lib.fetch import fetch, fetch_sync
 from lib.cancellable import Cancellable
 from lib.shmem_msg import InputMessageRegion, OutputMessageRegion
+from lib.logging import print
 
 DELAY_A = 1
 setdefaulttimeout(DELAY_A)
@@ -130,7 +131,7 @@ def on_received_new_peer_list(peer_list):
 if __name__ == "__main__":
   lib.dotenv.source(prefix="node-agent")
   global TRACKER_ADDRESS
-  TRACKER_ADDRESS = address(getenv("TRACKER_ADDRESS"))
+  TRACKER_ADDRESS = address(os.getenv("TRACKER_ADDRESS"))
   cancellable = Cancellable()
   # setup output
   region = Vardir.path(f"node_agent-{Port.get()}", "out")
@@ -143,6 +144,7 @@ if __name__ == "__main__":
   msg_region.watch_async(cancellable).then(_on_controller_message).start()
   # setup inter-network server
   nodeaddr = get_this_address(), Port.get()
+  os.environ["PORT"] = str(Port.get())
   server = Server(nodeaddr)
   def _on_connection(*args):
     return on_connection(*args, writer)
