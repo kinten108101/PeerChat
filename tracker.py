@@ -83,8 +83,9 @@ def auto_check(cancellable):
             print(f"Node {client} is online")
 
           client_socket.close()
-        except Exception :
+        except Exception as e:
           print(f"A node has gone offline {client}")
+          print(f"reason: {e}")
           f(client)
           break
       time.sleep(10)
