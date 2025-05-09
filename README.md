@@ -14,6 +14,8 @@ To run the node program, create a `.node-agent.env`, then run the program with `
 
 To run the tracker program, create a `.tracker.env`, then run the program with `python3 tracker.py`.
 
+Also in this repository is a sample GUI client implemention at `chat-ui`. To run this, make sure you have installed all dependencies, preferably in a Python virtual environment. You should have tkinter on your system, which comes prebundled with the Python binding which `chat-ui.py` needs. Other dependencies are listed in `requirements.txt`. Finally, change working directory to `chat-ui`, and execute `./chat-ui.py`
+
 ## Contribution
 
 Please read all the documentation carefully at `doc` before contributing. This folder contains all information about the coding style and protocols we use.
