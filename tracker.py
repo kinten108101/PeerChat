@@ -53,12 +53,16 @@ def on_connection(request, response):
   response.close()
 
 ab = re.compile(r"^exit$")
+ae = re.compile(r"^get_list$")
 
 def on_controller_message(message, cancellable):
   regexp = RegExpBuffer()
   if regexp.match(ab, message):
     print("exiting")
     cancellable.clear()
+  elif regexp.match(ae, message):
+    content = get_list()
+    print(f"get_list: list is {content}")
   else:
     OSError(f"cli-message: unknown message \"{message}\"")
 

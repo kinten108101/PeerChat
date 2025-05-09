@@ -35,11 +35,18 @@ def submit_info_async():
   return fetch(TRACKER_ADDRESS, "submit_info", body).then(on_response)
 
 re_check_alive = re.compile(r"^check_alive:{}$")
+re_message_raw = re.compile(r'^send_message_raw:(.+)$')
 
 def on_connection(request, response, writer):
   regexp = RegExpBuffer()
   if regexp.match(re_check_alive, request.message):
     response.write("is_alive:{}")
+  elif regexp.match(re_message_raw, request.message):
+    body = regexp.group(1)
+    body = json.loads(body)
+    content = f'connection: received message: {body["message"]}'
+    print(content)
+    writer.write(content)
   response.close()
 
 def login_async(username, password):
@@ -49,11 +56,19 @@ def login_async(username, password):
     USER = f"{username}:{password}"
   return Promise(target=a, args=[username, password])
 
+def get_list_async():
+  return fetch(address, "get_list", {})
+
+def send_message_raw_async(address, message):
+  return fetch(address, "send_message_raw", { "message": message })
+
 aa = re.compile(r'^connect:{ "address": "([\\.0-9]+):([0-9]+)" }$')
 ab = re.compile(r"^exit:{}$")
 ac = re.compile(r"^print_info:{}$")
 ad = re.compile(r"^submit_info:{}$")
 ae = re.compile(r'^login:{ "name": "([^:]+)", "password": "([^:]+)" }$')
+af = re.compile(r'^send_message_raw:{ "node_address": "(.+)", "message": "(.+)" }$')
+ak = re.compile(r'^get_list:{}$')
 
 def on_controller_message(message, cancellable, writer):
   regexp = RegExpBuffer()
@@ -82,6 +97,19 @@ def on_controller_message(message, cancellable, writer):
     password = regexp.group(2)
     login_async(username, password).start()
     return
+  elif regexp.match(af, message):
+    node_address = regexp.group(1)
+    content = regexp.group(2)
+    def then(response):
+      print("message sent")
+    send_message_raw_async(node_address, content).then(then).start()
+    return
+  elif regexp.match(ak, message):
+    def then(response):
+      message = f"get_list: current list is {response}"
+      print(message)
+      writer.write(message)
+    get_list_async().then(then).start()
   print(f'cli-message: unknown message \"{message}\"')
 
 USER = None
