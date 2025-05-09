@@ -57,7 +57,7 @@ def login_async(username, password):
   return Promise(target=a, args=[username, password])
 
 def get_list_async():
-  return fetch(address, "get_list", {})
+  return fetch(TRACKER_ADDRESS, "get_list", {})
 
 def send_message_raw_async(address, message):
   return fetch(address, "send_message_raw", { "message": message })
