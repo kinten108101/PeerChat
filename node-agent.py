@@ -68,7 +68,6 @@ ac = re.compile(r"^print_info:{}$")
 ad = re.compile(r"^submit_info:{}$")
 ae = re.compile(r'^login:{ "name": "([^:]+)", "password": "([^:]+)" }$')
 af = re.compile(r'^send_message_raw:{ "node_address": "(.+)", "message": "(.+)" }$')
-ak = re.compile(r'^get_list:{}$')
 
 def on_controller_message(message, cancellable, writer):
   regexp = RegExpBuffer()
@@ -85,7 +84,7 @@ def on_controller_message(message, cancellable, writer):
     cancellable.clear()
     return
   elif regexp.match(ac, message):
-    content = f"address: {get_this_address()}:{Port.get()}"
+    content = f"address: {get_this_address()}:{Port.get()}\npeer list: {PEER_LIST}"
     print(content)
     writer.write(content)
     return
@@ -104,12 +103,6 @@ def on_controller_message(message, cancellable, writer):
       print("message sent")
     send_message_raw_async(node_address, content).then(then).start()
     return
-  elif regexp.match(ak, message):
-    def then(response):
-      message = f"get_list: current list is {response}"
-      print(message)
-      writer.write(message)
-    get_list_async().then(then).start()
   print(f'cli-message: unknown message \"{message}\"')
 
 USER = None
