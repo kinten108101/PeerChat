@@ -8,7 +8,7 @@ Follows the communication protocol as specified in [[/docs/PROTOCOL.md]].
 
 From a Node, send a string to the other Node's IP address.
 
-TBA
+- `send_message:{ "channel": "$user:$channel", "message": "$message" }`
 
 ## Control a Node
 
